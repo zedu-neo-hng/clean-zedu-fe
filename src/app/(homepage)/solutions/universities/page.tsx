@@ -11,7 +11,7 @@ import { DynamicFooter } from "../../_components/footer/dynamic-footer";
 export const metadata: Metadata = {
   title: "Universities Solutions",
   description:
-    "Power higher education communication with Zedu. Connect departments, professors, and students with structured channels, searchable discussions, and AI-assisted learning workflows.",
+    "Zedu helps universities organize course discussions, connect students and faculty, and support AI-assisted learning in one higher education communication platform.",
   keywords: [
     "university communication platform",
     "higher education collaboration software",
