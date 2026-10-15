@@ -101,6 +101,7 @@ export const contributors: Contributor[] = [
   },
   { name: "Victor Tommy Etudor", githubUsername: "victoretudor" },
   { name: "Zubairu Ayuba", githubUsername: "ayzubair" },
+  { name: "Michael Temitope", githubUsername: "michaeltemitope" },
 ];
 
 export const contributorCount = contributors.length;
