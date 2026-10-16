@@ -113,6 +113,7 @@ const MessageBox = ({
   channelLoading = false,
   draftKey,
   showTyping = true,
+  typingScope = "channel",
 }: any) => {
   const { state, dispatch } = useContext(DataContext);
   const params = useParams();
@@ -954,7 +955,11 @@ const MessageBox = ({
             </div>
           </div>
         </div>
-        {showTyping ? <TypingUsers /> : null}
+        <p className="pointer-events-none absolute -bottom-2 right-0 hidden px-1 text-xs leading-4 text-[#667085] dark:text-zinc-400 md:block">
+          <kbd className="font-sans font-semibold">Shift + Enter</kbd> for a new
+          line
+        </p>
+        {showTyping ? <TypingUsers scope={typingScope} /> : null}
       </div>
     </div>
   );
