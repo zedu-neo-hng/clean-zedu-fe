@@ -44,6 +44,7 @@ import ResponseFeedback from "./response-feedback";
 interface MessageProps {
   item: any;
   shouldShowAvatar: any;
+  showFeedback?: boolean;
   popupId?: any;
   setPopupId?: any;
 }
@@ -51,6 +52,7 @@ interface MessageProps {
 const Message = ({
   item,
   shouldShowAvatar,
+  showFeedback = false,
   setPopupId,
   popupId,
 }: MessageProps) => {
@@ -344,8 +346,8 @@ const Message = ({
           </Popover>
         </div>
 
-        {item?.user_type === "bot" && item?.type !== "system" && (
-          <ResponseFeedback messageId={item.id} />
+        {showFeedback && item?.type !== "system" && (
+          <ResponseFeedback messageId={item?.id} />
         )}
 
         {item?.message_count > 0 && (

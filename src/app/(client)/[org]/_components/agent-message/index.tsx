@@ -59,7 +59,11 @@ const AgentMessage = ({ participant }: any) => {
 
               return (
                 <React.Fragment key={index}>
-                  <Message item={item} shouldShowAvatar={shouldShowAvatar} />
+                  <Message
+                    item={item}
+                    shouldShowAvatar={shouldShowAvatar}
+                    showFeedback={item?.user_type === "bot"}
+                  />
                 </React.Fragment>
               );
             })}
