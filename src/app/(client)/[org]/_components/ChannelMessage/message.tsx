@@ -39,10 +39,12 @@ import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { cn } from "~/lib/utils";
 import UserAvatar from "~/components/layout/user-avatar";
 import { formatReactionUsers } from "~/utils/format-reaction-users";
+import ResponseFeedback from "./response-feedback";
 
 interface MessageProps {
   item: any;
   shouldShowAvatar: any;
+  showFeedback?: boolean;
   popupId?: any;
   setPopupId?: any;
 }
@@ -50,6 +52,7 @@ interface MessageProps {
 const Message = ({
   item,
   shouldShowAvatar,
+  showFeedback = false,
   setPopupId,
   popupId,
 }: MessageProps) => {
@@ -342,6 +345,10 @@ const Message = ({
             </PopoverContent>
           </Popover>
         </div>
+
+        {showFeedback && item?.type !== "system" && (
+          <ResponseFeedback messageId={item?.id} />
+        )}
 
         {item?.message_count > 0 && (
           <ReplyCard
