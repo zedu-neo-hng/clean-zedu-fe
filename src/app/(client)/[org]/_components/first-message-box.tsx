@@ -48,8 +48,23 @@ import Tooltips from "./tooltip";
 import { CHAT_FILE_ACCEPT } from "~/utils/document-files";
 import { localGifToFile, type LocalGif } from "~/lib/gifs/local-pack";
 
-const FirstMessageBox = ({ sendMessage }: any) => {
-  const { editor, isEmpty } = UseTextEditor();
+interface FirstMessageBoxProps {
+  sendMessage: (id: string, uuid: string, content: string, medias: any) => void;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+const FirstMessageBox = ({
+  sendMessage,
+  placeholder,
+  disabled,
+}: FirstMessageBoxProps) => {
+  const { editor, isEmpty } = UseTextEditor(
+    undefined,
+    undefined,
+    undefined,
+    placeholder
+  );
   const params = useParams();
   const id = params.id as string;
   const uuid = uuidv7();
@@ -139,6 +154,7 @@ const FirstMessageBox = ({ sendMessage }: any) => {
   // Handle message submission (no need to upload images here)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) return;
 
     const editorText = editor?.getText() ?? "";
     let content = normalizeOutgoingMessageHtml(
@@ -164,7 +180,9 @@ const FirstMessageBox = ({ sendMessage }: any) => {
         return;
       } else {
         event.preventDefault();
-        handleSubmit(event);
+        if (!disabled) {
+          handleSubmit(event);
+        }
       }
     }
   };
@@ -549,13 +567,13 @@ const FirstMessageBox = ({ sendMessage }: any) => {
           <div className="flex items-center gap-1 py-2 pl-3 pr-4">
             <button
               type="submit"
-              className="p-1.5 hover:bg-gray-100 rounded size-8 flex items-center justify-center"
+              className="p-1.5 hover:bg-gray-100 rounded size-8 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSubmit}
-              disabled={isEmpty && media?.length === 0}
+              disabled={disabled || (isEmpty && media?.length === 0)}
             >
               <SendHorizonal
                 className={
-                  isEmpty && media?.length === 0
+                  disabled || (isEmpty && media?.length === 0)
                     ? "text-[#999] dark:text-zinc-500"
                     : "text-zinc-900 dark:text-zinc-100"
                 }
