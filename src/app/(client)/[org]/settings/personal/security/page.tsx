@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import UpdatePassword from "./components/update-password";
+import { parseStoredJson } from "~/utils/utils";
 
 function getPaginationRange(currentPage: number, totalPages: number) {
   const range = [];
@@ -45,7 +46,11 @@ const SecurityPage = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const user = parseStoredJson<{ id?: string }>(
+      localStorage.getItem("user"),
+      {}
+    );
+    if (!user?.id) return;
     const getData = async () => {
       const res = await GetRequest(
         `/users/${user?.id}/login-audit?page=${currentPage}&limit=${itemsPerPage}`

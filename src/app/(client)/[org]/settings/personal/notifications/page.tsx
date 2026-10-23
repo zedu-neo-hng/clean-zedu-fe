@@ -33,34 +33,37 @@ const NotificationPage = () => {
 
     const fetchPreferences = async () => {
       setLoading(true);
-      const res = await GetRequest(
-        `/organisations/${orgId}/notification-preference?device_type=web`
-      );
-      if (res.status === 200 || res.status === 201) {
-        const data = res.data.data;
-        const [from, to] = data.time_range.split(" - ").map(convertTo24Hour);
+      try {
+        const res = await GetRequest(
+          `/organisations/${orgId}/notification-preference?device_type=web`
+        );
+        if (res.status === 200 || res.status === 201) {
+          const data = res.data.data;
+          const { timeFrom, timeTo } = parseTimeRange(data?.time_range);
 
-        setPrefs({
-          notificationType: getNotifyType(data.notify_about),
-          timeFrom: from,
-          timeTo: to,
-          infoMethod: data.send_mail ? "email" : "mobile",
-        });
-        setInitialPrefs({
-          notificationType: getNotifyType(data.notify_about),
-          timeFrom: from,
-          timeTo: to,
-          infoMethod: data.send_mail ? "email" : "mobile",
-        });
+          setPrefs({
+            notificationType: getNotifyType(data?.notify_about),
+            timeFrom,
+            timeTo,
+            infoMethod: data?.send_mail ? "email" : "mobile",
+          });
+          setInitialPrefs({
+            notificationType: getNotifyType(data?.notify_about),
+            timeFrom,
+            timeTo,
+            infoMethod: data?.send_mail ? "email" : "mobile",
+          });
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchPreferences();
   }, []);
 
   const getNotifyType = (
-    notify_about: string
+    notify_about?: string
   ): Preferences["notificationType"] => {
     if (notify_about === "all_new_messages") return "all";
     if (notify_about === "mentions") return "mentions";
@@ -75,12 +78,37 @@ const NotificationPage = () => {
     return `${formattedHour.toString().padStart(2, "0")}:${m} ${suffix}`;
   };
 
-  const convertTo24Hour = (time: string) => {
-    const [t, suffix] = time.split(" ");
-    let [h, m] = t.split(":").map(Number);
-    if (suffix === "PM" && h !== 12) h += 12;
-    if (suffix === "AM" && h === 12) h = 0;
-    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+  const parseTimeRange = (range: unknown) => {
+    if (typeof range !== "string") {
+      return {
+        timeFrom: defaultPreferences.timeFrom,
+        timeTo: defaultPreferences.timeTo,
+      };
+    }
+
+    const [from, to] = range.split(" - ");
+    return {
+      timeFrom: convertTo24Hour(from) ?? defaultPreferences.timeFrom,
+      timeTo: convertTo24Hour(to) ?? defaultPreferences.timeTo,
+    };
+  };
+
+  const convertTo24Hour = (time: string): string | null => {
+    if (typeof time !== "string") return null;
+
+    const [clock, suffix] = time.trim().split(/\s+/);
+    if (!clock || !suffix || !/^(AM|PM)$/i.test(suffix)) return null;
+
+    const [h, m] = clock.split(":").map(Number);
+    if (!Number.isInteger(h) || !Number.isInteger(m)) return null;
+    if (h < 1 || h > 12 || m < 0 || m > 59) return null;
+
+    let hour = h;
+    if (suffix.toUpperCase() === "PM" && h !== 12) hour += 12;
+    if (suffix.toUpperCase() === "AM" && h === 12) hour = 0;
+    return `${hour.toString().padStart(2, "0")}:${m
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const handleSave = async () => {

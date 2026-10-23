@@ -19,7 +19,7 @@ import InviteModal from "~/app/(client)/[org]/_components/invite-modal";
 import ChannelInviteModal from "~/app/(client)/[org]/_components/invite-modal/channel";
 import OrganisationMenu from "~/app/(client)/[org]/_components/org-dropdown";
 import Tooltips from "~/app/(client)/[org]/_components/tooltip";
-import { formatCount } from "~/utils/utils";
+import { formatCount, parseStoredStringArray } from "~/utils/utils";
 // import AddColleagueDialog from "~/app/(client)/[org]/_components/colleagues/add-colleagues-modal";
 // import { ColleaguesCard } from "~/app/(client)/[org]/_components/colleagues/card";
 
@@ -63,15 +63,15 @@ export default function ChannelNav({
     }
   };
 
-  const [openAccordions, setOpenAccordions] = useState<string[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("openAccordions");
-      return saved
-        ? JSON.parse(saved)
-        : ["channels", "workflows", "agents", "people"];
-    }
-    return ["channels", "workflows", "agents", "people"];
-  });
+  const defaultAccordions = ["channels", "workflows", "agents", "people"];
+  const [openAccordions, setOpenAccordions] = useState<string[]>(() =>
+    typeof window === "undefined"
+      ? defaultAccordions
+      : parseStoredStringArray(
+          localStorage.getItem("openAccordions"),
+          defaultAccordions
+        )
+  );
 
   const handleAccordionChanges = (values: string[]) => {
     setOpenAccordions(values);

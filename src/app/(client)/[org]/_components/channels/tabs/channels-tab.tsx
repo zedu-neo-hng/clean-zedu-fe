@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { search } from "~/utils/filter";
 import { Channel } from "~/types/channel";
 import { PostRequest } from "~/utils/new-request";
+import { parseStoredJson } from "~/utils/utils";
 import Loading from "~/components/ui/loading";
 
 /**
@@ -141,25 +142,30 @@ export default function ChannelsTab() {
   const handleJoin = async (id: string) => {
     setButtonloading(true);
 
-    const channel = allChannels?.find(
-      (item: Channel) => item.channels_id === id
-    );
-    if (channel?.name) {
-      localStorage.setItem("channelName", channel.name);
-      dispatch({ type: ACTIONS.CHANNEL_NAME, payload: channel.name });
-    }
+    try {
+      const channel = allChannels?.find(
+        (item: Channel) => item.channels_id === id
+      );
+      if (channel?.name) {
+        localStorage.setItem("channelName", channel.name);
+        dispatch({ type: ACTIONS.CHANNEL_NAME, payload: channel.name });
+      }
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = parseStoredJson<{ username?: string }>(
+        localStorage.getItem("user"),
+        {}
+      );
 
-    const res = await PostRequest(`/channels/${id}/join`, {
-      username: user?.username,
-    });
-    const alreadyMember = String(res?.response?.data?.message ?? "")
-      .toLowerCase()
-      .includes("already in channel");
-    if (res?.status === 200 || res?.status === 201 || alreadyMember) {
-      router.push(`/${orgSlug}/home/channels/${id}`);
-    } else {
+      const res = await PostRequest(`/channels/${id}/join`, {
+        username: user?.username,
+      });
+      const alreadyMember = String(res?.response?.data?.message ?? "")
+        .toLowerCase()
+        .includes("already in channel");
+      if (res?.status === 200 || res?.status === 201 || alreadyMember) {
+        router.push(`/${orgSlug}/home/channels/${id}`);
+      }
+    } finally {
       setButtonloading(false);
     }
   };

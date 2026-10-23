@@ -18,6 +18,7 @@ import {
   prepareChannelSubscription,
   releaseChannelSubscription,
 } from "~/lib/centrifugo/shared-centrifuge";
+import { parseStoredJson } from "~/utils/utils";
 
 const CLIENT_URL = process.env.NEXT_PUBLIC_CLIENT_URL;
 
@@ -61,7 +62,10 @@ export default function GeneralNotificationConnection() {
 
   // centrifugo connection for notification
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const user = parseStoredJson<{ id?: string; user_id?: string }>(
+      localStorage.getItem("user"),
+      {}
+    );
     if (!orgId || !user?.id) return;
 
     const channel = `${orgId}/${user.id}`;

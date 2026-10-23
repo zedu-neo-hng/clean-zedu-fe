@@ -1,5 +1,28 @@
 import React from "react";
 
+export function parseStoredJson<T>(raw: string | null, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+export function parseStoredStringArray(
+  raw: string | null,
+  fallback: string[]
+): string[] {
+  const parsed = parseStoredJson<unknown>(raw, fallback);
+  if (
+    Array.isArray(parsed) &&
+    parsed.every((item) => typeof item === "string")
+  ) {
+    return parsed;
+  }
+  return fallback;
+}
+
 export const formatCount = (count: number): string => {
   if (count < 1000) {
     return count.toString();

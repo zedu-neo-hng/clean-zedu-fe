@@ -30,6 +30,7 @@ import {
   type PermissionRequirement,
 } from "~/config/access-control";
 import { evaluatePermissionRequirement } from "~/components/rbac/RequirePermission";
+import { parseStoredStringArray } from "~/utils/utils";
 
 const ORG_NAV_ICONS: Record<string, React.ReactNode> = {
   general: <SettingsIcon className="w-5" />,
@@ -42,14 +43,14 @@ const ORG_NAV_ICONS: Record<string, React.ReactNode> = {
 
 export default function SettingsNav() {
   const { state, dispatch } = useContext(DataContext);
-  const [openAccordions, setOpenAccordions] = useState<string[]>(() => {
-    const saved =
-      typeof window !== "undefined"
-        ? localStorage.getItem("Accordions2")
-        : null;
-
-    return saved ? JSON.parse(saved) : ["personal", "organisation"];
-  });
+  const [openAccordions, setOpenAccordions] = useState<string[]>(() =>
+    typeof window === "undefined"
+      ? ["personal", "organisation"]
+      : parseStoredStringArray(localStorage.getItem("Accordions2"), [
+          "personal",
+          "organisation",
+        ])
+  );
 
   const pathname = usePathname();
   const sidebarRef = useRef<HTMLDivElement | null>(null);

@@ -5,6 +5,7 @@ import Loading from "~/components/ui/loading";
 import { ACTIONS } from "~/store/Actions";
 import { DataContext } from "~/store/GlobalState";
 import { PostRequest } from "~/utils/new-request";
+import { parseStoredJson } from "~/utils/utils";
 
 const JoinChannel = () => {
   const { state, dispatch } = useContext(DataContext);
@@ -21,17 +22,21 @@ const JoinChannel = () => {
   const handleJoin = async () => {
     setButtonloading(true);
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    try {
+      const user = parseStoredJson<{ username?: string }>(
+        localStorage.getItem("user"),
+        {}
+      );
 
-    const res = await PostRequest(`/channels/${id}/join`, {
-      username: user?.username,
-    });
-    if (res?.status === 200 || res?.status === 200) {
-      dispatch({
-        type: ACTIONS.CHANNEL_CALLBACK,
+      const res = await PostRequest(`/channels/${id}/join`, {
+        username: user?.username,
       });
-      setButtonloading(false);
-    } else {
+      if (res?.status === 200 || res?.status === 201) {
+        dispatch({
+          type: ACTIONS.CHANNEL_CALLBACK,
+        });
+      }
+    } finally {
       setButtonloading(false);
     }
   };
