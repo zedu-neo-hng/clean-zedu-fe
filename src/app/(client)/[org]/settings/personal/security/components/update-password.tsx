@@ -27,6 +27,11 @@ const UpdatePassword = () => {
   const handleSaveNewPassword = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (newPassword.length < 7) {
+      showError("Password must be at least 7 characters");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       showError("Password does not match");
       return;
