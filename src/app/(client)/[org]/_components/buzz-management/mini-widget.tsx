@@ -95,12 +95,18 @@ const MiniWidget = () => {
         </div>
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            aria-label="Maximize"
+            title="Maximize"
             className="w-8 h-8 border border-[#E4E7EC] rounded-lg flex items-center justify-center text-[#344054] hover:bg-[#4a4e6b25] transition-colors"
             onClick={handleMaximize}
           >
             <Maximize2 size={15} />
           </button>
           <button
+            type="button"
+            aria-label="Minimize"
+            title="Minimize"
             className="w-8 h-8 border border-[#E4E7EC] rounded-lg flex items-center justify-center text-[#344054] hover:bg-[#4a4e6b25] transition-colors"
             onClick={handleMinimize}
           >
@@ -197,6 +203,9 @@ const MiniWidget = () => {
           </div>
         </div>
         <button
+          type="button"
+          aria-label={buzzParticipants?.length === 1 ? "End call" : "Leave call"}
+          title={buzzParticipants?.length === 1 ? "End call" : "Leave call"}
           className="bg-red-500 text-white rounded-lg p-2.5 hover:bg-red-600 transition-colors size-full font-medium flex items-center justify-center"
           onClick={
             buzzParticipants?.length === 1 ? handleEndCall : handleLeaveCall
