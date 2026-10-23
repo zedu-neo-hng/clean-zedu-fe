@@ -14,6 +14,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import AppleSignin from "react-apple-signin-auth";
 import { Separator } from "~/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
+import { safeRedirect } from "~/utils/safe-redirect";
 
 //
 
@@ -53,15 +54,10 @@ function Login() {
         if (orgSlug) {
           localStorage.setItem("orgSlug", orgSlug);
         }
-        if (redirectUrl) {
-          router.push(redirectUrl);
-        } else {
-          if (user?.is_onboarded) {
-            router.push(`/${orgSlug}`);
-          } else {
-            router.push(`/${orgSlug}/welcome`);
-          }
-        }
+        const fallback = user?.is_onboarded
+          ? `/${orgSlug}`
+          : `/${orgSlug}/welcome`;
+        router.push(safeRedirect(redirectUrl, fallback));
         const message = `\nName: ${user?.username}\\nEmail: ${user?.email}`;
         await LoginWebhookRequest(
           user?.username,
@@ -133,23 +129,17 @@ function Login() {
           localStorage.setItem("orgSlug", orgSlug);
         }
 
-        if (redirectUrl) {
-          // If there's a coworkerId, append it to the redirect URL
-          const finalRedirectUrl = coworkerId
-            ? `${redirectUrl}?coworkerId=${coworkerId}`
-            : redirectUrl;
-          setTimeout(() => {
-            router.push(finalRedirectUrl);
-          }, 100);
-        } else {
-          setTimeout(() => {
-            if (res?.data?.data?.user?.is_onboarded) {
-              router.push(`/${orgSlug}`);
-            } else {
-              router.push(`/${orgSlug}/welcome`);
-            }
-          }, 100);
-        }
+        const fallback = res?.data?.data?.user?.is_onboarded
+          ? `/${orgSlug}`
+          : `/${orgSlug}/welcome`;
+        const redirectTarget = safeRedirect(redirectUrl, fallback);
+        const finalRedirectUrl =
+          redirectUrl && coworkerId && redirectTarget === redirectUrl
+            ? `${redirectTarget}${redirectTarget.includes("?") ? "&" : "?"}coworkerId=${coworkerId}`
+            : redirectTarget;
+        setTimeout(() => {
+          router.push(finalRedirectUrl);
+        }, 100);
 
         const user = res?.data?.data?.user;
         // after successful login call this endpoint
@@ -216,15 +206,10 @@ function Login() {
             localStorage.setItem("orgSlug", orgSlug);
           }
 
-          if (redirectUrl) {
-            router.push(redirectUrl);
-          } else {
-            if (user?.is_onboarded) {
-              router.push(`/${orgSlug}`);
-            } else {
-              router.push(`/${orgSlug}/welcome`);
-            }
-          }
+          const fallback = user?.is_onboarded
+            ? `/${orgSlug}`
+            : `/${orgSlug}/welcome`;
+          router.push(safeRedirect(redirectUrl, fallback));
 
           const message = `
             Name: ${user?.username}\\n

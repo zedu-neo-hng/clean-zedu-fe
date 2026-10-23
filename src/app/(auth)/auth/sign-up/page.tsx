@@ -13,6 +13,7 @@ import { RegisterWebhookRequest } from "~/utils/webhook-request";
 import { Separator } from "~/components/ui/separator";
 import AppleSignin from "react-apple-signin-auth";
 import { Eye, EyeOff } from "lucide-react";
+import { safeRedirect } from "~/utils/safe-redirect";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -50,15 +51,10 @@ function SignUp() {
         if (orgSlug) {
           localStorage.setItem("orgSlug", orgSlug);
         }
-        if (redirectUrl) {
-          router.push(redirectUrl);
-        } else {
-          if (user?.is_onboarded) {
-            router.push(`/${orgSlug}`);
-          } else {
-            router.push(`/${orgSlug}/welcome`);
-          }
-        }
+        const fallback = user?.is_onboarded
+          ? `/${orgSlug}`
+          : `/${orgSlug}/welcome`;
+        router.push(safeRedirect(redirectUrl, fallback));
         const message = `\nName: ${user?.username}\\nEmail: ${user?.email}`;
         RegisterWebhookRequest(
           user?.username,
@@ -183,19 +179,13 @@ function SignUp() {
           localStorage.setItem("orgSlug", orgSlug);
         }
 
-        if (redirectUrl) {
-          setTimeout(() => {
-            router.push(redirectUrl);
-          }, 100);
-        } else {
-          setTimeout(() => {
-            if (res?.data?.data?.user?.is_onboarded) {
-              router.push(`/${orgSlug}`);
-            } else {
-              router.push(`/${orgSlug}/welcome`);
-            }
-          }, 100);
-        }
+        const fallback = res?.data?.data?.user?.is_onboarded
+          ? `/${orgSlug}`
+          : `/${orgSlug}/welcome`;
+        const redirectTarget = safeRedirect(redirectUrl, fallback);
+        setTimeout(() => {
+          router.push(redirectTarget);
+        }, 100);
 
         const user = res?.data?.data?.user;
 
@@ -241,15 +231,10 @@ function SignUp() {
             localStorage.setItem("orgSlug", orgSlug);
           }
 
-          if (redirectUrl) {
-            router.push(redirectUrl);
-          } else {
-            if (user?.is_onboarded) {
-              router.push(`/${orgSlug}`);
-            } else {
-              router.push(`${orgSlug}/welcome`);
-            }
-          }
+          const fallback = user?.is_onboarded
+            ? `/${orgSlug}`
+            : `/${orgSlug}/welcome`;
+          router.push(safeRedirect(redirectUrl, fallback));
 
           const message = `
           Name: ${user?.username}\\n
