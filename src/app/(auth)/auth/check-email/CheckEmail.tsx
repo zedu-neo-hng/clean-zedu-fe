@@ -3,15 +3,48 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
+import { Toaster } from "~/components/ui/toaster";
+import { PostRequest } from "~/utils/request";
+import { showError, showSuccess } from "~/components/toast/sonner";
 
 const CheckEmail = () => {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
+  const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => setCooldown((value) => value - 1), 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const handleResend = async () => {
+    if (!email) {
+      showError("We could not find your email address. Please sign up again.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await PostRequest("/auth/email-request", { email });
+      if (res?.status === 200 || res?.status === 201) {
+        showSuccess(
+          res?.data?.message ||
+            "Verification email sent. Check your inbox and spam folder."
+        );
+        setCooldown(60);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
+      <Toaster />
       <main className="w-full min-h-screen flex flex-col md:flex-row">
         <section className="w-full md:w-[45%] bg-[#F9FAFB] px-[20px] md:px-[40px] py-[20px] hidden lg:block">
           <Link href="/">
@@ -56,7 +89,7 @@ const CheckEmail = () => {
               Check your Email
             </h1>
             <p className="w-full text-left text-[14px] md:text-[16px] text-[#344054] font-[400] leading-[21px] md:leading-[27px] mb-[32px]">
-              We have sent an email with the password reset information to{" "}
+              We have sent an email with the verification link to{" "}
               {email
                 ? email.replace(/(.{2}).+(@.+)/, "$1***$2")
                 : "your email address"}
@@ -70,9 +103,15 @@ const CheckEmail = () => {
             <Button
               type="button"
               variant="default"
-              className="py-6 bg-[#7141F8] hover:bg-[#8760f8] text-white"
+              onClick={handleResend}
+              disabled={loading || cooldown > 0}
+              className="py-6 bg-[#7141F8] hover:bg-[#8760f8] text-white disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Resend Email
+              {loading
+                ? "Sending..."
+                : cooldown > 0
+                  ? `Resend Email in ${cooldown}s`
+                  : "Resend Email"}
             </Button>
             <Link href="/auth/login">
               <Button
