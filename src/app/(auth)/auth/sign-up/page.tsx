@@ -13,6 +13,7 @@ import { RegisterWebhookRequest } from "~/utils/webhook-request";
 import { Separator } from "~/components/ui/separator";
 import AppleSignin from "react-apple-signin-auth";
 import { Eye, EyeOff } from "lucide-react";
+import { safeRedirect } from "~/utils/safe-redirect";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ function SignUp() {
       const res = await PostRequest("/auth/apple", { id_token });
       if (res?.status === 200 || res?.status === 201) {
         const user = res?.data?.data?.user;
-        const redirectUrl = searchParams.get("redirect") || "";
+        const redirectUrl = safeRedirect(searchParams.get("redirect"));
         localStorage.setItem("token", res?.data?.data?.access_token);
         localStorage.setItem("useremail", user?.email);
         localStorage.setItem("user", JSON.stringify(user));
@@ -170,7 +171,7 @@ function SignUp() {
         password,
       };
 
-      const redirectUrl = searchParams.get("redirect") || "";
+      const redirectUrl = safeRedirect(searchParams.get("redirect"));
       const res = await PostRequest("/auth/register", payload);
 
       if (res?.status === 200 || res?.status === 201) {
@@ -230,7 +231,7 @@ function SignUp() {
 
         if (res?.status === 200 || res?.status === 201) {
           const user = res?.data?.data?.user;
-          const redirectUrl = searchParams.get("redirect") || "";
+          const redirectUrl = safeRedirect(searchParams.get("redirect"));
 
           localStorage.setItem("token", res?.data?.data?.access_token);
           localStorage.setItem("useremail", user?.email);
