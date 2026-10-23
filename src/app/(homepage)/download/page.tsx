@@ -224,7 +224,12 @@ const DownLoadPage = () => {
             text="Download for Desktop"
             hideArrow={false}
             className="!px-6 !py-2.5"
+            disabled
           />
+          <p className="text-center text-xs text-neutral-500 sm:text-sm">
+            The desktop app is coming soon. Download Zedu for iOS or Android
+            above.
+          </p>
 
           <div className="w-full">
             <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[16/8]">
