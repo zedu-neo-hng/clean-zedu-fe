@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowBtn, OutlineBtn } from "../ui/Button";
 
 export const DynamicFooter = ({
@@ -14,16 +15,24 @@ export const DynamicFooter = ({
       </h1>
       <p className="max-w-2xl text-base text-neutral-600">{description}</p>
       <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:gap-2">
-        <ArrowBtn
-          text="Get started for free"
-          className="w-full sm:w-auto"
-          linkToHome
-        />
+        <div className="w-full sm:w-auto [&>a]:w-full">
+          <ArrowBtn
+            text="Get started for free"
+            className="w-full justify-center sm:w-auto"
+            linkToHome
+          />
+        </div>
         <OutlineBtn
           text="Contact Sales"
-          className="w-full sm:w-auto"
+          className="hidden sm:inline-flex"
           href="/contact-sales"
         />
+        <Link
+          href="/contact-sales"
+          className="text-sm font-medium text-primary-500 hover:text-primary-600 hover:underline sm:hidden"
+        >
+          Contact Sales
+        </Link>
       </div>
     </div>
   );
