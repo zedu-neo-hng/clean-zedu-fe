@@ -144,6 +144,7 @@ export const ViewMembersModal: React.FC<ViewMembersModalProps> = ({
         <div className="px-6 pb-4">
           <Input
             type="search"
+            aria-label="Find a member"
             placeholder="Find a member"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -182,6 +183,9 @@ export const ViewMembersModal: React.FC<ViewMembersModalProps> = ({
                       />
                       {!isUserDeactivated(member) && (
                         <span
+                          role="status"
+                          aria-label={member.online ? "Online" : "Offline"}
+                          title={member.online ? "Online" : "Offline"}
                           className={`absolute -right-0.5 -bottom-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${
                             member.online ? "bg-[#00AD51]" : "bg-[#F97316]"
                           }`}
