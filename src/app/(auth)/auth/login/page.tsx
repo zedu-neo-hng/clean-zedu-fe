@@ -14,6 +14,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import AppleSignin from "react-apple-signin-auth";
 import { Separator } from "~/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
+import { safeRedirect } from "~/utils/safe-redirect";
 
 //
 
@@ -44,7 +45,7 @@ function Login() {
       const res = await PostRequest("/auth/apple", { id_token });
       if (res?.status === 200 || res?.status === 201) {
         const user = res?.data?.data?.user;
-        const redirectUrl = searchParams.get("redirect") || "";
+        const redirectUrl = safeRedirect(searchParams.get("redirect"));
         localStorage.setItem("token", res?.data?.data?.access_token);
         localStorage.setItem("useremail", user?.email);
         localStorage.setItem("user", JSON.stringify(user));
@@ -117,7 +118,7 @@ function Login() {
         password,
       };
 
-      const redirectUrl = searchParams.get("redirect") || "";
+      const redirectUrl = safeRedirect(searchParams.get("redirect"));
       const coworkerId = searchParams.get("coworkerId") || "";
 
       const res = await PostRequest("/auth/login", payload);
@@ -135,9 +136,12 @@ function Login() {
 
         if (redirectUrl) {
           // If there's a coworkerId, append it to the redirect URL
-          const finalRedirectUrl = coworkerId
-            ? `${redirectUrl}?coworkerId=${coworkerId}`
-            : redirectUrl;
+          let finalRedirectUrl = redirectUrl;
+          if (coworkerId) {
+            const url = new URL(redirectUrl, "https://zedu.chat");
+            url.searchParams.set("coworkerId", coworkerId);
+            finalRedirectUrl = `${url.pathname}${url.search}${url.hash}`;
+          }
           setTimeout(() => {
             router.push(finalRedirectUrl);
           }, 100);
@@ -205,7 +209,7 @@ function Login() {
 
         if (res?.status === 200 || res?.status === 201) {
           const user = res?.data?.data?.user;
-          const redirectUrl = searchParams.get("redirect") || "";
+          const redirectUrl = safeRedirect(searchParams.get("redirect"));
 
           localStorage.setItem("token", res?.data?.data?.access_token);
           localStorage.setItem("useremail", user?.email);
