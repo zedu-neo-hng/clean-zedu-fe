@@ -33,7 +33,9 @@ export function lookupAppleEmoji(emoji: string) {
 function emojiImageTag(emoji: string, unified: string) {
   const src = appleEmojiImageUrl(unified);
   if (!src) return emoji;
-  return `<img class="apple-emoji-img" alt="${emoji}" src="${src}" draggable="false" />`;
+  const safeSrc = src.replace(/"/g, "&quot;");
+  const safeAlt = emoji.replace(/"/g, "&quot;");
+  return `<img class="apple-emoji-img" alt="${safeAlt}" src="${safeSrc}" draggable="false" />`;
 }
 
 export function replaceEmojiWithImages(value: string) {
