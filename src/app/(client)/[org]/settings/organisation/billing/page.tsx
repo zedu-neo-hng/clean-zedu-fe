@@ -28,14 +28,41 @@ export const Client = () => {
         `/subscriptions/complete?session_id=${sessionId}`
       );
       if (res?.status === 200 || res?.status === 201) {
-        // router.push(`/${orgSlug}/settings/organisation/billing`)
+        showSuccess("Payment completed successfully");
+        // Refresh subscription data after successful payment
+        try {
+          const orgId = localStorage.getItem("orgId") || "";
+          const token = localStorage.getItem("token") || "";
+          if (orgId && token) {
+            const subRes = await axios.get(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/subscriptions/current/${orgId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (subRes?.data?.data) {
+              dispatch({
+                type: ACTIONS.SET_CURRENT_SUBSCRIPTION,
+                payload: subRes.data.data,
+              });
+            }
+          }
+        } catch (e) {
+          // ignore refresh errors
+        }
+        router.replace(`/${orgSlug}/settings/organisation/billing`);
+      } else {
+        router.replace(`/${orgSlug}/settings/organisation/billing`);
       }
     };
 
     if (sessionId) {
       completePayment();
     }
-  }, [sessionId]);
+  }, [sessionId, orgSlug, router, dispatch]);
 
   const [creditTransactions, setCreditTransactions] = React.useState([]);
   const [creditTransactionsLoading, setCreditTransactionsLoading] =
