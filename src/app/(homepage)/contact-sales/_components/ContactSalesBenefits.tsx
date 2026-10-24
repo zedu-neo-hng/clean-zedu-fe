@@ -27,8 +27,9 @@ export const ContactSalesBenefits = () => {
       <p className="text-sm text-[#595959] sm:text-base">
         Looking for product or customer support? Visit our{" "}
         <Link href="mailto:support@zedu.chat" className="text-[#6f4ef6]">
-          Help Center.
+          Help Center
         </Link>
+        .
       </p>
     </div>
   );
