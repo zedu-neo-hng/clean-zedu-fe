@@ -3,9 +3,9 @@ import { Star } from "lucide-react";
 import { ArrowBtn, OutlineBtn } from "../ui/Button";
 
 const metrics = [
-  { text: "Learners supported", amount: "10,000+" },
-  { text: "Conversations powered by AI", amount: "15,000+" },
-  { text: "Educator satisfaction", amount: "98%" },
+  { text: "Learners supported", amount: "25,000+" },
+  { text: "Conversations powered by AI", amount: "50,000+" },
+  { text: "Educator satisfaction", amount: "99%" },
 ];
 
 const HeroSection = () => {
@@ -16,17 +16,17 @@ const HeroSection = () => {
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[30%] bg-gradient-to-t from-blue-50/30 to-white"
       />
       <h1 className="text-2xl font-semibold leading-tight text-neutral-900 sm:text-4xl md:text-5xl text-center">
-        Built for Bootcamps and{" "}
-        <span className="text-primary-500">Learning</span> Communities
+        One Platform. Every <span className="text-primary-500">Learning</span>{" "}
+        Community.
       </h1>
       <p className="max-w-[95%] text-xs text-neutral-600 sm:max-w-[90%] sm:text-base md:max-w-[65%] lg:max-w-[45%] lg:text-lg">
-        Bring learners and educators together with organized conversations,
-        seamless cohort collaboration, and affordable communication tools built
-        for learning communities.
+        Unify messaging, voice & video, AI assistance, and resources in one
+        workspace. Built specifically for bootcamps, schools, and learning
+        communities that want to scale.
       </p>
       <div className="flex w-full max-w-md flex-row items-center justify-center gap-2 sm:gap-3">
         <ArrowBtn
-          text="Try for free"
+          text="Start free today"
           linkToHome
           loggedInText="Go to Dashboard"
           className="justify-center"

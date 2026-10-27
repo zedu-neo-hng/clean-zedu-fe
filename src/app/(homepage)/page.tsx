@@ -44,8 +44,8 @@ const HomePage = () => {
       <WhySection />
       <FAQSection />
       <DynamicFooter
-        text="Run Your Next Cohort Without Limits"
-        description="Join thousands of educators building better learning experiences."
+        text="Transform Your Learning Community Today"
+        description="Empower educators and learners with one unified platform built for modern education."
       />
     </section>
   );

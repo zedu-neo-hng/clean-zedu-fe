@@ -15,7 +15,7 @@ export const DynamicFooter = ({
       <p className="max-w-2xl text-base text-neutral-600">{description}</p>
       <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:gap-2">
         <ArrowBtn
-          text="Get started for free"
+          text="Start free today"
           className="w-full sm:w-auto"
           linkToHome
         />
